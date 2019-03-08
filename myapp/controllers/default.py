@@ -1,5 +1,6 @@
-from app import app
+from myapp import app
 from bottle import template, static_file, request
+from myapp.models.tables import User
 
 #static routes
 @app.get('/<filename:re:.*\.css>')
@@ -27,10 +28,11 @@ def cadastro():
     return template('cadastro')
 
 @app.route('/cadastro', method='POST')
-def acao_cadastro():
+def acao_cadastro(db):
     usuario = request.forms.get('usuario')
     senha = request.forms.get('senha')
-    insert_user(usuario, senha)
+    new_user = User(usuario, senha)
+    db.add(new_user)
     return template('verificacao_cadastro', nome=usuario)
 
 @app.route('/', method='POST')
